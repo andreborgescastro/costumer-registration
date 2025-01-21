@@ -5,14 +5,21 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint src ",
+    "lint:fix": "eslint src --fix"
   },
   "repository": "git@github.com:andreborgescastro/costumer-registration.git",
   "author": "André Borges <andreborgescastro@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.7",
+    "eslint": "^9.18.0",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
   }
 }
