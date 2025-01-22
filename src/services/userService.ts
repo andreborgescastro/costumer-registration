@@ -1,13 +1,19 @@
-import { randomUUID } from "crypto";
-import { User } from "../models/user";
+import { randomUUID } from 'crypto';
+import { User } from '../models/user';
+import { UserRepository } from '../repository/userRepository';
 
 export class UserService {
+  private repository: UserRepository;
+
+  constructor(repository: UserRepository) {
+    this.repository = repository;
+  }
+
   private users: User[] = []; // emulate memory DB
 
-  async create(user: User): Promise<User> {
-    user.id = randomUUID();
-    this.users.push(user);
-    return user;
+  create(user: User): Promise<User> {
+    const id = randomUUID();
+    return this.repository.create({ ...user, id });
   }
 
   async getAll(): Promise<User[]> {
@@ -22,7 +28,7 @@ export class UserService {
     const userIndex = this.users.findIndex((user) => user.id === id);
     if (userIndex === -1) return null;
 
-    this.users[userIndex] = { ...this.users[userIndex], ...updates};
+    this.users[userIndex] = { ...this.users[userIndex], ...updates };
     return this.users[userIndex];
   }
 
