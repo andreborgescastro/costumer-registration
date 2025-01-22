@@ -1,12 +1,11 @@
+import { randomUUID } from "crypto";
 import { User } from "../models/user";
 
 export class UserService {
   private users: User[] = []; // emulate memory DB
 
   async create(user: User): Promise<User> {
-    user.id = (this.users.length + 1).toString();
-    user.createdAt = new Date().toISOString();
-    user.updatedAt = user.createdAt;
+    user.id = randomUUID();
     this.users.push(user);
     return user;
   }
@@ -23,7 +22,7 @@ export class UserService {
     const userIndex = this.users.findIndex((user) => user.id === id);
     if (userIndex === -1) return null;
 
-    this.users[userIndex] = { ...this.users[userIndex], ...updates, updatedAt: new Date().toISOString() };
+    this.users[userIndex] = { ...this.users[userIndex], ...updates};
     return this.users[userIndex];
   }
 
