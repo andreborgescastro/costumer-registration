@@ -13,7 +13,9 @@
   "author": "André Borges <andreborgescastro@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@aws-sdk/types": "^3.731.0",
     "@eslint/js": "^9.18.0",
+    "@types/aws-lambda": "^8.10.147",
     "@types/node": "^22.10.7",
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
