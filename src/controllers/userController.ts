@@ -1,16 +1,13 @@
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
-import { UserService } from '../services/userService';
 import { User } from '../models/user';
 import { successResponse, errorResponse } from '../utils/responseHelper';
 import { validateObject } from '../utils/validator';
 import { userSchema } from '../schemas/userSchema';
 import { addressSchema } from '../schemas/addressSchema';
 import { contactSchema } from '../schemas/contactSchema';
-import { UserRepository } from '../repository/userRepository';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-const client = new DynamoDBClient({ region: process.env.AWS_REGION });
-const userRepository = new UserRepository(client, process.env.USERS_TABLE_NAME || '');
-const userService = new UserService(userRepository);
+import { createDependencies } from '../config/dependencies';
+
+const { userService } = createDependencies();
 
 export const createUser: APIGatewayProxyHandlerV2 = async (event) => {
   try {
