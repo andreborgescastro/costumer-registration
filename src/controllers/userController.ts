@@ -14,7 +14,6 @@ const userService = new UserService(userRepository);
 
 export const createUser: APIGatewayProxyHandlerV2 = async (event) => {
   try {
-    console.log('Table Name:', process.env.USERS_TABLE_NAME);
     const userInput: User = JSON.parse(event.body || '{}');
 
     const validationErrors = validateObject(
@@ -34,7 +33,7 @@ export const createUser: APIGatewayProxyHandlerV2 = async (event) => {
     const newUser = await userService.create(userInput);
     return successResponse(newUser);
   } catch (error) {
-    return errorResponse((error as Error).message);
+    return errorResponse((error as Error).message, 500);
   }
 };
 
@@ -73,8 +72,7 @@ export const updateUser: APIGatewayProxyHandlerV2 = async (event) => {
 export const deleteUser: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     const id = event.pathParameters?.id || '';
-    const deleted = await userService.delete(id);
-    if (!deleted) return errorResponse('User not found', 404);
+    await userService.delete(id);
     return successResponse({ message: 'User deleted successfully' });
   } catch (error) {
     return errorResponse((error as Error).message);

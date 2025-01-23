@@ -26,18 +26,13 @@ export class UserRepository {
    * @throws Error if the operation fails.
    */
   async create(user: User): Promise<User> {
-    try {
-      const command = new PutItemCommand({
-        TableName: this.tableName,
-        Item: marshall(user),
-      });
+    const command = new PutItemCommand({
+      TableName: this.tableName,
+      Item: marshall(user),
+    });
 
-      await this.client.send(command);
-      return user;
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw new Error('Failed to create user');
-    }
+    await this.client.send(command);
+    return user;
   }
 
   /**
@@ -47,18 +42,13 @@ export class UserRepository {
    * @throws Error if the operation fails.
    */
   async getById(id: string): Promise<User | null> {
-    try {
-      const command = new GetItemCommand({
-        TableName: this.tableName,
-        Key: marshall({ id }),
-      });
+    const command = new GetItemCommand({
+      TableName: this.tableName,
+      Key: marshall({ id }),
+    });
 
-      const result = await this.client.send(command);
-      return result.Item ? (unmarshall(result.Item) as User) : null;
-    } catch (error) {
-      console.error('Error retrieving user:', error);
-      throw new Error('Failed to retrieve user');
-    }
+    const result = await this.client.send(command);
+    return result.Item ? (unmarshall(result.Item) as User) : null;
   }
 
   /**
@@ -69,34 +59,38 @@ export class UserRepository {
    * @throws Error if the operation fails.
    */
   async update(id: string, updates: Partial<User>): Promise<User | null> {
-    try {
-      const expression = Object.keys(updates)
-        .map((key, index) => `${key} = :val${index}`)
-        .join(', ');
-      const expressionValues = marshall(
-        Object.entries(updates).reduce(
-          (acc, [key, value], index) => ({
-            ...acc,
-            [`:val${index}`]: value,
-          }),
-          {},
-        ),
-      );
+    const reservedKeywords = ['name', 'status', 'type'];
+    const expressionAttributeNames: { [key: string]: string } = {};
+    const expression = Object.keys(updates)
+      .map((key, index) => {
+        const attributeName = reservedKeywords.includes(key) ? `#key${index}` : key;
+        expressionAttributeNames[attributeName] = key; // Mapeia o alias para o nome real
+        return `${attributeName} = :val${index}`;
+      })
+      .join(', ');
 
-      const command = new UpdateItemCommand({
-        TableName: this.tableName,
-        Key: marshall({ id }),
-        UpdateExpression: `SET ${expression}`,
-        ExpressionAttributeValues: expressionValues,
-        ReturnValues: 'ALL_NEW',
-      });
+    const expressionValues = marshall(
+      Object.entries(updates).reduce(
+        (acc, [key, value], index) => ({
+          ...acc,
+          [`:val${index}`]: value,
+        }),
+        {},
+      ),
+    );
 
-      const result = await this.client.send(command);
-      return result.Attributes ? (unmarshall(result.Attributes) as User) : null;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw new Error('Failed to update user');
-    }
+    const command = new UpdateItemCommand({
+      TableName: this.tableName,
+      Key: marshall({ id }),
+      UpdateExpression: `SET ${expression}`,
+      ConditionExpression: 'attribute_exists(id)',
+      ExpressionAttributeNames: expressionAttributeNames,
+      ExpressionAttributeValues: expressionValues,
+      ReturnValues: 'ALL_NEW',
+    });
+
+    const result = await this.client.send(command);
+    return result.Attributes ? (unmarshall(result.Attributes) as User) : null;
   }
 
   /**
@@ -105,17 +99,11 @@ export class UserRepository {
    * @throws Error if the operation fails.
    */
   async delete(id: string): Promise<void> {
-    try {
-      const command = new DeleteItemCommand({
-        TableName: this.tableName,
-        Key: marshall({ id }),
-      });
-
-      await this.client.send(command);
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      throw new Error('Failed to delete user');
-    }
+    const command = new DeleteItemCommand({
+      TableName: this.tableName,
+      Key: marshall({ id }),
+    });
+    await this.client.send(command);
   }
 
   /**
@@ -124,16 +112,11 @@ export class UserRepository {
    * @throws Error if the operation fails.
    */
   async getAll(): Promise<User[]> {
-    try {
-      const command = new ScanCommand({
-        TableName: this.tableName,
-      });
+    const command = new ScanCommand({
+      TableName: this.tableName,
+    });
 
-      const result = await this.client.send(command);
-      return result.Items ? result.Items.map((item) => unmarshall(item) as User) : [];
-    } catch (error) {
-      console.error('Error retrieving users:', error);
-      throw new Error('Failed to retrieve users');
-    }
+    const result = await this.client.send(command);
+    return result.Items ? result.Items.map((item) => unmarshall(item) as User) : [];
   }
 }
