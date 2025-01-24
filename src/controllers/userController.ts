@@ -1,13 +1,13 @@
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
-import { UserService } from '../services/userService';
 import { User } from '../models/user';
 import { successResponse, errorResponse } from '../utils/responseHelper';
 import { validateObject } from '../utils/validator';
 import { userSchema } from '../schemas/userSchema';
 import { addressSchema } from '../schemas/addressSchema';
 import { contactSchema } from '../schemas/contactSchema';
+import { createDependencies } from '../config/dependencies';
 
-const userService = new UserService();
+const { userService } = createDependencies();
 
 export const createUser: APIGatewayProxyHandlerV2 = async (event) => {
   try {
@@ -30,7 +30,7 @@ export const createUser: APIGatewayProxyHandlerV2 = async (event) => {
     const newUser = await userService.create(userInput);
     return successResponse(newUser);
   } catch (error) {
-    return errorResponse((error as Error).message);
+    return errorResponse((error as Error).message, 500);
   }
 };
 
@@ -69,8 +69,7 @@ export const updateUser: APIGatewayProxyHandlerV2 = async (event) => {
 export const deleteUser: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     const id = event.pathParameters?.id || '';
-    const deleted = await userService.delete(id);
-    if (!deleted) return errorResponse('User not found', 404);
+    await userService.delete(id);
     return successResponse({ message: 'User deleted successfully' });
   } catch (error) {
     return errorResponse((error as Error).message);

@@ -1,36 +1,76 @@
-import { randomUUID } from "crypto";
-import { User } from "../models/user";
+import { randomUUID } from 'crypto';
+import { User } from '../models/user';
+import { UserRepository } from '../repository/userRepository';
 
 export class UserService {
-  private users: User[] = []; // emulate memory DB
+  private repository: UserRepository;
+
+  constructor(repository: UserRepository) {
+    this.repository = repository;
+  }
 
   async create(user: User): Promise<User> {
-    user.id = randomUUID();
-    this.users.push(user);
-    return user;
+    try {
+      const newUser = this.generateId(user);
+      return await this.repository.create(newUser);
+    } catch (error) {
+      console.error(`Id: ${user.id} - Error creating user:, ${error}`);
+      throw new Error('Failed to create user');
+    }
   }
 
   async getAll(): Promise<User[]> {
-    return this.users;
+    try {
+      return this.repository.getAll();
+    } catch (error) {
+      console.error('Error getting all users:', error);
+      throw new Error('Failed to get all users');
+    }
   }
 
-  async getById(id: string): Promise<User | undefined> {
-    return this.users.find((user) => user.id === id);
+  getById(id: string): Promise<User | null> {
+    try {
+      return this.repository.getById(id);
+    } catch (error) {
+      console.error(`Id: ${id} - Error getting user:, ${error}`);
+      throw new Error('Failed to get user');
+    }
   }
 
   async update(id: string, updates: Partial<User>): Promise<User | null> {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) return null;
-
-    this.users[userIndex] = { ...this.users[userIndex], ...updates};
-    return this.users[userIndex];
+    try {
+      return await this.repository.update(id, updates);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        (error.name === 'ConditionalCheckFailedException' || (error as any).__type?.includes('ConditionalCheckFailedException'))
+      ) {
+        console.error(`Id: ${id} - Conditional check failed: The item does not exist or does not meet the condition.`);
+        return null;
+      }
+      console.error(`Id: ${id} - Error updating user:, ${error}`);
+      throw new Error('Failed to update user');
+    }
   }
 
-  async delete(id: string): Promise<boolean> {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) return false;
+  async delete(id: string): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (error) {
+      console.error(`Id: ${id} - Error deleting user:, ${error}`);
+      throw new Error('Failed to delete user');
+    }
+  }
 
-    this.users.splice(userIndex, 1);
-    return true;
+  generateId(user: User): User {
+    const generateListWithIds = (list: Array<any> = []) => list.map((item) => ({ ...item, id: randomUUID() }));
+    const newUser = {
+      ...user,
+      id: randomUUID(),
+      addressList: generateListWithIds(user.addressList),
+      contactList: generateListWithIds(user.contactList),
+    };
+
+    return newUser;
   }
 }

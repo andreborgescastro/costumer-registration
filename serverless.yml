@@ -5,6 +5,21 @@ provider:
   runtime: nodejs20.x
   region: us-east-1
   stage: dev
+  environment:
+    REGION: ${self:provider.region}
+    USERS_TABLE_NAME: ${self:custom.tableName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.tableName}
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -12,6 +27,7 @@ custom:
 
 plugins:
   - serverless-offline
+  - serverless-dotenv-plugin
 
 functions:
   createUser:
