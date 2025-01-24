@@ -11,7 +11,9 @@
     "start:offline": "yarn run build && serverless offline --stage dev",
     "deploy": "serverless deploy",
     "prepare": "husky",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "repository": "git@github.com:andreborgescastro/costumer-registration.git",
   "author": "André Borges <andreborgescastro@gmail.com>",
