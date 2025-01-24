@@ -6,8 +6,20 @@ provider:
   region: us-east-1
   stage: dev
   environment:
-    AWS_REGION: ${self:provider.region}
+    REGION: ${self:provider.region}
     USERS_TABLE_NAME: ${self:custom.tableName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.tableName}
 
 custom:
   stage: ${opt:stage, self:provider.stage}

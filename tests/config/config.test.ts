@@ -13,7 +13,7 @@ describe('createDependencies', () => {
   });
 
   it('should create dependencies with correct parameters', () => {
-    process.env.AWS_REGION = 'us-east-1';
+    process.env.REGION = 'us-east-1';
     process.env.USERS_TABLE_NAME = 'UsersTable';
 
     const mockDynamoDBClient = new DynamoDBClient({ region: 'us-east-1' });
