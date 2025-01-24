@@ -1,4 +1,4 @@
-import { validateObject } from '../../src/utils/validator'; // Ajuste o caminho conforme necessário
+import { validateObject } from '../../src/utils/validator';
 
 describe('validator', () => {
   it('should return no errors for a valid object', () => {

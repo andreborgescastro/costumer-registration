@@ -1,4 +1,4 @@
-import { successResponse, errorResponse } from '../../src/utils/responseHelper'; // Altere o caminho conforme necessário
+import { successResponse, errorResponse } from '../../src/utils/responseHelper';
 
 describe('Response Functions', () => {
   describe('successResponse', () => {

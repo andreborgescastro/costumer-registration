@@ -64,7 +64,7 @@ export class UserRepository {
     const expression = Object.keys(updates)
       .map((key, index) => {
         const attributeName = reservedKeywords.includes(key) ? `#key${index}` : key;
-        expressionAttributeNames[attributeName] = key; // Mapeia o alias para o nome real
+        expressionAttributeNames[attributeName] = key;
         return `${attributeName} = :val${index}`;
       })
       .join(', ');
