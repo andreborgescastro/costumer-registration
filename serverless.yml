@@ -1,0 +1,80 @@
+service: costumer-registration
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+  environment:
+    REGION: ${self:provider.region}
+    USERS_TABLE_NAME: ${self:custom.tableName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.tableName}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  tableName: ${self:service}-${self:custom.stage}-users
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+functions:
+  createUser:
+    handler: dist/handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+
+  getAllUsers:
+    handler: dist/handler.getAllUsers
+    events:
+      - http:
+          path: users
+          method: get
+
+  getUserById:
+    handler: dist/handler.getUserById
+    events:
+      - http:
+          path: users/{id}
+          method: get
+
+  updateUser:
+    handler: dist/handler.updateUser
+    events:
+      - http:
+          path: users/{id}
+          method: put
+
+  deleteUser:
+    handler: dist/handler.deleteUser
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
