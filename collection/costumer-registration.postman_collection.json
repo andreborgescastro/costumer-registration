@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "4a4b8277-3094-4e04-aaf3-c5b422ccb996",
+		"name": "costumer-registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34480870"
+	},
+	"item": [
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"John Doe\",\n  \"birthdate\": \"2000-01-01\",\n  \"status\": \"active\",\n  \"addressList\": [\n    {\n      \"id\": \"1\",\n      \"street\": \"123 Main St\",\n      \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"country\": \"USA\"\n    }\n  ]\n}\n \n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{api-gw-endpoint}}/dev/users",
+					"protocol": "http",
+					"host": [
+						"{{api-gw-endpoint}}"
+					],
+					"path": [
+						"dev",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api-gw-endpoint}}/dev/users/:id",
+					"protocol": "http",
+					"host": [
+						"{{api-gw-endpoint}}"
+					],
+					"path": [
+						"dev",
+						"users",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "678c3eb6-6242-4ead-9e0d-e435d0f27390"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Don Jhon Mayers\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{api-gw-endpoint}}/dev/users/:id",
+					"protocol": "http",
+					"host": [
+						"{{api-gw-endpoint}}"
+					],
+					"path": [
+						"dev",
+						"users",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "678c3eb6-6242-4ead-9e0d-e435d0f27390"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{api-gw-endpoint}}/dev/users/:id",
+					"protocol": "http",
+					"host": [
+						"{{api-gw-endpoint}}"
+					],
+					"path": [
+						"dev",
+						"users",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "678c3eb6-6242-4ead-9e0d-e435d0f27390"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api-gw-endpoint}}/dev/users",
+					"protocol": "http",
+					"host": [
+						"{{api-gw-endpoint}}"
+					],
+					"path": [
+						"dev",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api-gw-endpoint",
+			"value": "localhost:3000",
+			"type": "string"
+		}
+	]
+}

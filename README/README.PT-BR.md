@@ -168,6 +168,13 @@ Adicionamos a cobertura de testes ao projeto para facilitar a visualização, ma
 
 ---
 
+## Collection
+
+Collection com as rotas básicas do projeto.
+[Postman Collection v2.1](./../collection/costumer-registration.postman_collection.json)
+
+---
+
 ## Contato
 
 Se você encontrar algum problema ou tiver dúvidas, sinta-se à vontade para abrir uma issue no repositório ou entrar em contato comigo.

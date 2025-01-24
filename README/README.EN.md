@@ -170,6 +170,13 @@ it through the instructions below.
 
 ---
 
+## Collection
+
+Collection with the basic routes of the project.
+[Postman Collection v2.1](./../collection/costumer-registration.postman_collection.json)
+
+---
+
 ## Contact
 
 If you encounter any issues or have questions, feel free to open an issue in the repository or contact me.
